@@ -92,7 +92,8 @@ def calculate_reward():
         reward=-10
     elif finished:
         reward=+100
-    reward=0.1
+    else:
+     reward=0.1
     if agent_speed<1:
         reward-=0.05
     return reward
