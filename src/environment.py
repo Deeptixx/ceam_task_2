@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
 import math
-from reward_function import get_reward, get_reward_fast, get_reward_safe
+from .reward_function import get_reward, get_reward_fast, get_reward_safe
 pygame.init() #initlaize pygame
 screen_width=600
 screen_height=400
