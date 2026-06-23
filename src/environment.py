@@ -178,3 +178,48 @@ def render(display=True):
         screen.blit(finish_text, (screen_width - 180, 10))
     pygame.display.flip()
     clock.tick(fps)
+if __name__ == "__main__":
+    state = reset()
+    
+    print("Testing Racing Environment")
+    print("Arrow keys: LEFT/RIGHT to turn, UP to accelerate, DOWN to brake")
+    print("Q to quit")
+    print(f"Initial state: {state}")
+    
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    running = False
+        
+        keys = pygame.key.get_pressed()
+        action = None
+        
+        if keys[pygame.K_LEFT]:
+            action = 0  # Turn left
+        elif keys[pygame.K_RIGHT]:
+            action = 1  # Turn right
+        elif keys[pygame.K_UP]:
+            action = 2  # Accelerate
+        elif keys[pygame.K_DOWN]:
+            action = 3  # Brake
+        else:
+            action = 0  # Default: turn left (no input)
+        
+        state, reward, done = step(action)
+        render()
+        
+        if done:
+            print(f"Episode done. Crashed: {crashed}, Finished: {finished}, Total steps: {steps}")
+            state = reset()
+    
+    print("Test complete!")
+    pygame.quit()
+    
+
+
+
+
