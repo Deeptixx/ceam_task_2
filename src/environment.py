@@ -1,9 +1,8 @@
 import pygame
 import numpy as np
 import math
-from reward_function import get_reward
-
-pygame.init()
+from reward_function import get_reward, get_reward_fast, get_reward_safe
+pygame.init() #initlaize pygame
 screen_width=600
 screen_height=400
 fps=60
@@ -25,11 +24,11 @@ max_speed=10
 starting_x=track_centre_x
 starting_y=track_centre_y+outer_radius_y-30
 
-screen=pygame.display.set_mode((screen_width,screen_height))
+screen=pygame.display.set_mode((screen_width,screen_height)) #set up display and clock for controlling frame rate
 pygame.display.set_caption("Autonomous Racing Agent")
 clock=pygame.time.Clock()
 
-agent_x=starting_x
+agent_x=starting_x  #inital state of the agent
 agent_y=starting_y
 agent_angle=0
 agent_speed=0
@@ -41,7 +40,7 @@ finished=False
 crossed_start=False
 finish_line_x=track_centre_x
 
-def reset():
+def reset(): #reset the environment to the initial state and return the inital observtions
     global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start
     agent_x=starting_x
     agent_y=starting_y
@@ -55,7 +54,7 @@ def reset():
     crossed_start=False
     return get_state()
 
-def step(action):
+def step(action): #update the environment based on action and return new state and reward
     global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start
     if action==0:
         agent_angle-=3
@@ -65,37 +64,33 @@ def step(action):
         agent_speed=min(agent_speed+2,max_speed)
     elif action==3:
         agent_speed=max(agent_speed-2,0)
-
     agent_angle=agent_angle%360
     rad=math.radians(agent_angle)
     agent_x+=agent_speed*math.sin(rad)
     agent_y-=agent_speed*math.cos(rad)
-
     if agent_x>finish_line_x-5 and agent_x<finish_line_x+5:
         crossed_start=True
     if crossed_start and (agent_x>finish_line_x+20 or agent_x<finish_line_x-20):
         finished=True
     crashed=check_collision()
     steps+=1
-    
-    # Call reward function from reward_function.py
     reward=get_reward(crashed, finished, agent_speed)
     
     if crashed or finished or steps>=max_steps:
         episode_done=True
     return get_state(),reward,episode_done
 
-def check_collision():
+def check_collision(): #check if the agent collides with the track boundaries
     dx=agent_x-track_centre_x
     dy=agent_y-track_centre_y
-    outer_distance=(dx/outer_radius_x)**2+(dy/outer_radius_y)**2
+    outer_distance=(dx/outer_radius_x)**2+(dy/outer_radius_y)**2 #calculate distance from the track centre and normalize by the track radii
     inner_distance=(dx/inner_radius_x)**2+(dy/inner_radius_y)**2
     if outer_distance>1 or inner_distance<1:
         return True
     return False
 
-def get_perpendicular(angle_offset=0.0):
-    check_angle=agent_angle+angle_offset
+def get_perpendicular(angle_offset=0.0): #cast a ray in the direction of the agent's angle plus the offset and check for collision with track boundaries to measure distance to the wall
+    check_angle=agent_angle+angle_offset #angle offset is used to check left and right and simulate many sensor directions 
     rad=math.radians(check_angle)
     for distance in range(1,150):
         check_x=agent_x+distance*math.sin(rad)
@@ -108,7 +103,7 @@ def get_perpendicular(angle_offset=0.0):
             return distance
     return 150
 
-def get_state():
+def get_state(): #returns current state in the form of a numpy array(normalized)
     left_distance=get_perpendicular(angle_offset=-90)
     right_distance=get_perpendicular(angle_offset=90)
     left_distance=max(0,min(left_distance/100,1.0))
@@ -119,7 +114,7 @@ def get_state():
     angle=agent_angle/360.0
     return np.array([left_distance, right_distance, speed, distance_to_finish,angle],dtype=np.float32)
 
-def render(display=True):
+def render(display=True): # draw track
     screen.fill(white)
     pygame.draw.ellipse(
         screen, 
@@ -163,7 +158,6 @@ def render(display=True):
     speed_text = font.render(f"speed: {agent_speed:.1f}", True, black)
     angle_text = font.render(f"angle: {agent_angle:.0f}°", True, black)
     step_text = font.render(f"steps: {steps}", True, black)
-    
     screen.blit(speed_text, (10, 10))
     screen.blit(angle_text, (10, 40))
     screen.blit(step_text, (10, 70))
@@ -178,7 +172,7 @@ def render(display=True):
     pygame.display.flip()
     clock.tick(fps)
 
-if __name__ == "__main__":
+if __name__ == "__main__": #test
     state = reset()
     
     print("Testing Racing Environment")
