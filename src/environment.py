@@ -22,7 +22,7 @@ inner_radius_y=outer_radius_y-track_width
 agent_size=8
 max_speed=10
 starting_x=track_centre_x
-starting_y=track_centre_y+outer_radius_y-20
+starting_y=track_centre_y+outer_radius_y-30
 
 screen=pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption("Autonomous Racing Agent")
@@ -38,7 +38,7 @@ episode_done=False
 crashed=False
 finished=False
 crossed_start=False
-finish_line_y=track_centre_y+outer_radius_y-20
+finish_line_x=track_centre_x
 
 def reset():
     global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start
@@ -56,25 +56,25 @@ def reset():
 def step(action):
     global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start
     if action==0: #turn left shaprly
-        agent_angle-=10
+        agent_angle-=3
     elif action==1:
-        agent_angle+=10
+        agent_angle+=3
     elif action==2: #accelerate
         agent_speed=min(agent_speed+2,max_speed)
     elif action==3: #brake
-        agent_speed=max(agent_speed-3,0)
+        agent_speed=max(agent_speed-2,0)
 
     agent_angle=agent_angle%360
     rad=math.radians(agent_angle)
     agent_x+=agent_speed*math.sin(rad)
     agent_y-=agent_speed*math.cos(rad)
 
-    if agent_y>finish_line_y-5:
+    if agent_x>finish_line_x+5:
         crossed_start=True
-    if crossed_start and agent_y<finish_line_y-50:
+    if crossed_start and agent_x<finish_line_x-50:
         finished=True
     crashed=check_collision()
-    step+=1
+    steps+=1
     reward=calculate_reward()
     if crashed or finished or steps>=max_steps:
         episode_done=True
@@ -115,7 +115,7 @@ def get_state():
     left_distance=max(0,min(left_distance/100,1.0))
     right_distance=max(0,min(right_distance/100,1.0))
     speed=agent_speed/max_speed
-    distance_to_finish=abs(agent_y-finish_line_y)
+    distance_to_finish=abs(agent_y-finish_line_x)
     distance_to_finish=max(0,min(distance_to_finish/200,1.0))
     angle=agent_angle/360.0
     return np.array([left_distance, right_distance, speed, distance_to_finish,angle],dtype=np.float32)
@@ -142,20 +142,23 @@ def render(display=True):
     pygame.draw.line( #draw the finish line
         screen,
         green,
-        (track_centre_x - 40, finish_line_y),
-        (track_centre_x + 40, finish_line_y),
+        (track_centre_x,track_centre_y+inner_radius_y),
+        (track_centre_x, track_centre_y+outer_radius_y),
         3
     )
-    pygame.draw.circle(screen, blue, (int(agent_x), int(agent_y)), agent_size) #draw the agent
-    rad = math.radians(agent_angle) #draw direction indicator
-    end_x = agent_x + 15 * math.sin(rad)
-    end_y = agent_y - 15 * math.cos(rad)
-    pygame.draw.line(
+    pygame.draw.circle(screen, blue, (int(agent_x), int(agent_y)), agent_size)
+    rad = math.radians(agent_angle)
+    tip_x = agent_x + 15 * math.sin(rad)
+    tip_y = agent_y - 15 * math.cos(rad)
+    left_x = agent_x + 8 * math.sin(rad + math.radians(140))
+    left_y = agent_y - 8 * math.cos(rad + math.radians(140))
+
+    right_x = agent_x + 8 * math.sin(rad - math.radians(140))
+    right_y = agent_y - 8 * math.cos(rad - math.radians(140))
+    pygame.draw.polygon(
         screen,
         red,
-        (int(agent_x), int(agent_y)),
-        (int(end_x), int(end_y)),
-        2
+        [(int(tip_x), int(tip_y)), (int(left_x), int(left_y)), (int(right_x), int(right_y))]
     )
     font = pygame.font.Font(None, 24) #text display for spped, angle and steps
     speed_text = font.render(f"speed: {agent_speed:.1f}", True, black)
@@ -175,4 +178,3 @@ def render(display=True):
         screen.blit(finish_text, (screen_width - 180, 10))
     pygame.display.flip()
     clock.tick(fps)
-
