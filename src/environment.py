@@ -1,8 +1,9 @@
 import pygame
 import numpy as np
 import math
+from reward_function import get_reward
 
-pygame.init() #initializing pygame
+pygame.init()
 screen_width=600
 screen_height=400
 fps=60
@@ -53,15 +54,16 @@ def reset():
     finished=False
     crossed_start=False
     return get_state()
+
 def step(action):
     global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start
-    if action==0: #turn left shaprly
+    if action==0:
         agent_angle-=3
     elif action==1:
         agent_angle+=3
-    elif action==2: #accelerate
+    elif action==2:
         agent_speed=min(agent_speed+2,max_speed)
-    elif action==3: #brake
+    elif action==3:
         agent_speed=max(agent_speed-2,0)
 
     agent_angle=agent_angle%360
@@ -69,16 +71,20 @@ def step(action):
     agent_x+=agent_speed*math.sin(rad)
     agent_y-=agent_speed*math.cos(rad)
 
-    if agent_x>finish_line_x+5:
+    if agent_x>finish_line_x-5 and agent_x<finish_line_x+5:
         crossed_start=True
-    if crossed_start and agent_x<finish_line_x-50:
+    if crossed_start and (agent_x>finish_line_x+20 or agent_x<finish_line_x-20):
         finished=True
     crashed=check_collision()
     steps+=1
-    reward=calculate_reward()
+    
+    # Call reward function from reward_function.py
+    reward=get_reward(crashed, finished, agent_speed)
+    
     if crashed or finished or steps>=max_steps:
         episode_done=True
     return get_state(),reward,episode_done
+
 def check_collision():
     dx=agent_x-track_centre_x
     dy=agent_y-track_centre_y
@@ -87,16 +93,7 @@ def check_collision():
     if outer_distance>1 or inner_distance<1:
         return True
     return False
-def calculate_reward():
-    if crashed:
-        reward=-10
-    elif finished:
-        reward=+100
-    else:
-     reward=0.1
-    if agent_speed<1:
-        reward-=0.05
-    return reward
+
 def get_perpendicular(angle_offset=0.0):
     check_angle=agent_angle+angle_offset
     rad=math.radians(check_angle)
@@ -110,19 +107,21 @@ def get_perpendicular(angle_offset=0.0):
         if outer_distance>1.0 or inner_distance<1.0:
             return distance
     return 150
+
 def get_state():
     left_distance=get_perpendicular(angle_offset=-90)
     right_distance=get_perpendicular(angle_offset=90)
     left_distance=max(0,min(left_distance/100,1.0))
     right_distance=max(0,min(right_distance/100,1.0))
     speed=agent_speed/max_speed
-    distance_to_finish=abs(agent_y-finish_line_x)
+    distance_to_finish=abs(agent_x-finish_line_x)
     distance_to_finish=max(0,min(distance_to_finish/200,1.0))
     angle=agent_angle/360.0
     return np.array([left_distance, right_distance, speed, distance_to_finish,angle],dtype=np.float32)
+
 def render(display=True):
     screen.fill(white)
-    pygame.draw.ellipse( #draw the outer wall
+    pygame.draw.ellipse(
         screen, 
         black,
         (track_centre_x - outer_radius_x, 
@@ -131,7 +130,7 @@ def render(display=True):
          outer_radius_y * 2),
         5
     )
-    pygame.draw.ellipse( #draw the inner wall
+    pygame.draw.ellipse(
         screen,
         black,
         (track_centre_x - inner_radius_x,
@@ -140,7 +139,7 @@ def render(display=True):
          inner_radius_y * 2),
         5
     )
-    pygame.draw.line( #draw the finish line
+    pygame.draw.line(
         screen,
         green,
         (track_centre_x,track_centre_y+inner_radius_y),
@@ -153,7 +152,6 @@ def render(display=True):
     tip_y = agent_y - 15 * math.cos(rad)
     left_x = agent_x + 8 * math.sin(rad + math.radians(140))
     left_y = agent_y - 8 * math.cos(rad + math.radians(140))
-
     right_x = agent_x + 8 * math.sin(rad - math.radians(140))
     right_y = agent_y - 8 * math.cos(rad - math.radians(140))
     pygame.draw.polygon(
@@ -161,7 +159,7 @@ def render(display=True):
         red,
         [(int(tip_x), int(tip_y)), (int(left_x), int(left_y)), (int(right_x), int(right_y))]
     )
-    font = pygame.font.Font(None, 24) #text display for spped, angle and steps
+    font = pygame.font.Font(None, 24)
     speed_text = font.render(f"speed: {agent_speed:.1f}", True, black)
     angle_text = font.render(f"angle: {agent_angle:.0f}°", True, black)
     step_text = font.render(f"steps: {steps}", True, black)
@@ -179,6 +177,7 @@ def render(display=True):
         screen.blit(finish_text, (screen_width - 180, 10))
     pygame.display.flip()
     clock.tick(fps)
+
 if __name__ == "__main__":
     state = reset()
     
@@ -200,15 +199,15 @@ if __name__ == "__main__":
         action = None
         
         if keys[pygame.K_LEFT]:
-            action = 0  # Turn left
+            action = 0
         elif keys[pygame.K_RIGHT]:
-            action = 1  # Turn right
+            action = 1
         elif keys[pygame.K_UP]:
-            action = 2  # Accelerate
+            action = 2
         elif keys[pygame.K_DOWN]:
-            action = 3  # Brake
+            action = 3
         else:
-            action = 0  # Default: turn left (no input)
+            action = 0
         
         state, reward, done = step(action)
         render()
@@ -219,8 +218,3 @@ if __name__ == "__main__":
     
     print("Test complete!")
     pygame.quit()
-    
-
-
-
-
