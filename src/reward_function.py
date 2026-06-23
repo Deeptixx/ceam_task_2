@@ -9,7 +9,7 @@ def get_reward(crashed, finished, speed): #basic reward function
         reward -= 0.05
     return reward
 
-def get_reward_aggressive(crashed, finished, speed): #reward fucntion that encourages faster driving
+def get_reward_fast(crashed, finished, speed): #reward fucntion that encourages faster driving
     if crashed:
         return -15
     elif finished:
@@ -21,7 +21,7 @@ def get_reward_aggressive(crashed, finished, speed): #reward fucntion that encou
     return reward
 
 
-def get_reward_conservative(crashed, finished, speed): #reward function that encourages safer driving.
+def get_reward_safe(crashed, finished, speed): #reward function that encourages safer driving.
     if crashed:
         return -20
     elif finished:
