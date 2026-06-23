@@ -11,7 +11,7 @@ max_steps_per_episode=1000
 
 def train_agent():
     racing_env=agent.RacingEnv()
-    model=PPO("MLpPolicy",
+    model=PPO("MlpPolicy",
         racing_env,
         learning_rate=learning_rate,
         n_steps=n_steps,
@@ -24,4 +24,5 @@ def train_agent():
     model.learn(total_timesteps=total_timestamps)
     print("Training complete.")
     return model
-  
+
+    
