@@ -5,7 +5,7 @@ import numpy as np
 from stable_baselines3 import PPO #proximal policy optimization
 import gymnasium as gym
 from gymnasium import spaces
-import environment as env
+from src import environment as env
 
 class RacingEnv(gym.Env):
     def __init__(self):
