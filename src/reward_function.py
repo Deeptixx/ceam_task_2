@@ -8,7 +8,6 @@ def get_reward(crashed, finished, speed): #basic reward function
     if speed < 1.0:
         reward -= 0.05
     return reward
-
 def get_reward_fast(crashed, finished, speed): #reward fucntion that encourages faster driving
     if crashed:
         return -15
@@ -19,8 +18,6 @@ def get_reward_fast(crashed, finished, speed): #reward fucntion that encourages 
     if speed < 2.0:
         reward -= 0.1
     return reward
-
-
 def get_reward_safe(crashed, finished, speed): #reward function that encourages safer driving.
     if crashed:
         return -20
