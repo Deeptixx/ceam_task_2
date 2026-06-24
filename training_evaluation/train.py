@@ -6,8 +6,9 @@ n_steps=2048
 batch_size=64
 epochs=10
 gamma=0.99
-total_timestamps=10000
+total_timesteps=10000
 max_steps_per_episode=1000
+save_path="models/trained_racing_agent"
 
 def train_agent():
     racing_env=agent.RacingEnv()
@@ -20,9 +21,20 @@ def train_agent():
         gamma=gamma,
         verbose=1
     )
-    print(f"Training agent for {total_timestamps} timesteps:")
-    model.learn(total_timesteps=total_timestamps)
+    print(f"Training agent for {total_timesteps} timesteps:")
+    model.learn(total_timesteps=total_timesteps)
     print("Training complete.")
     return model
+def save_model(model,path=save_path):
+    model.save(path)
+    print(f"Model saved to path {path}")
 
-    
+if __name__ == "__main__":
+    print("Starting training:")
+    trained_model = train_agent()
+    try:
+        save_model(trained_model)
+        print(f"Model saved to path {save_path}")
+    except Exception as e:
+        print("SAVE ERROR:", e)
+        
