@@ -34,7 +34,5 @@ if __name__ == "__main__":
     trained_model = train_agent()
     try:
         save_model(trained_model)
-        print(f"Model saved to path {save_path}")
     except Exception as e:
         print("SAVE ERROR:", e)
-        
