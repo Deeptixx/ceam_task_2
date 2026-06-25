@@ -6,7 +6,7 @@ n_steps=2048
 batch_size=64
 epochs=10
 gamma=0.99
-total_timesteps=10000
+total_timesteps=100000
 max_steps_per_episode=1000
 save_path="models/trained_racing_agent"
 
