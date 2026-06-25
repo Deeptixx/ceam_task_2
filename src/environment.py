@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
 import math
-from .reward_function import get_reward, get_reward_fast, get_reward_safe
+from .reward_function import get_reward
 pygame.init() #initlaize pygame
 screen_width=600
 screen_height=400
@@ -21,8 +21,8 @@ inner_radius_x=outer_radius_x-track_width
 inner_radius_y=outer_radius_y-track_width
 agent_size=8
 max_speed=10
-starting_x=track_centre_x
-starting_y=track_centre_y+outer_radius_y-30
+starting_x=track_centre_x-100
+starting_y=track_centre_y
 
 screen=pygame.display.set_mode((screen_width,screen_height)) #set up display and clock for controlling frame rate
 pygame.display.set_caption("Autonomous Racing Agent")
@@ -38,13 +38,15 @@ episode_done=False
 crashed=False
 finished=False
 crossed_start=False
+prev_agent_x=0
+prev_agent_y=0
 finish_line_x=track_centre_x
 
 def reset(): #reset the environment to the initial state and return the inital observtions
-    global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start
-    agent_x=starting_x
-    agent_y=starting_y
-    agent_angle=0
+    global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start,prev_agent_x,prev_agent_y
+    agent_x=starting_x+np.random.uniform(-5,5)
+    agent_y=starting_y+np.random.uniform(-5,5)
+    agent_angle=np.random.uniform(-10,10)
     agent_speed=0
     steps=0
     max_steps=1000
@@ -52,10 +54,16 @@ def reset(): #reset the environment to the initial state and return the inital o
     crashed=False
     finished=False
     crossed_start=False
+    prev_agent_x=agent_x
+    prev_agent_y=agent_y
     return get_state()
-
-def step(action): #update the environment based on action and return new state and reward
-    global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start
+def step(action):
+    global agent_x,agent_y,agent_angle,agent_speed,steps,episode_done,crashed,finished,crossed_start,prev_agent_x,prev_agent_y
+    left_far = get_perpendicular(angle_offset=-90)
+    right_far = get_perpendicular(angle_offset=90)
+    left_far=max(0,min(left_far/100,1.0))
+    right_far=max(0,min(right_far/100,1.0))
+    centre_error=abs(left_far-right_far)
     if action==0:
         agent_angle-=3
     elif action==1:
@@ -64,18 +72,29 @@ def step(action): #update the environment based on action and return new state a
         agent_speed=min(agent_speed+2,max_speed)
     elif action==3:
         agent_speed=max(agent_speed-2,0)
+    
     agent_angle=agent_angle%360
     rad=math.radians(agent_angle)
     agent_x+=agent_speed*math.sin(rad)
     agent_y-=agent_speed*math.cos(rad)
-    if agent_x>finish_line_x-5 and agent_x<finish_line_x+5:
-        crossed_start=True
-    if crossed_start and (agent_x>finish_line_x+20 or agent_x<finish_line_x-20):
-        finished=True
+    movement=math.sqrt((agent_x-prev_agent_x)**2 + (agent_y-prev_agent_y)**2)
+    if not crossed_start:
+        if prev_agent_x < finish_line_x and agent_x >= finish_line_x:
+            crossed_start = True
+
+    start_dx = agent_x - starting_x
+    start_dy = agent_y - starting_y
+    dist_to_start = math.sqrt(start_dx**2 + start_dy**2)
+
+    if crossed_start and dist_to_start < 15:
+        finished = True
+    prev_agent_x=agent_x
+    prev_agent_y=agent_y
     crashed=check_collision()
     steps+=1
     reward=get_reward(crashed, finished, agent_speed)
-    
+    reward+=movement*0.05
+    reward-=centre_error*0.02
     if crashed or finished or steps>=max_steps:
         episode_done=True
     return get_state(),reward,episode_done
@@ -104,15 +123,20 @@ def get_perpendicular(angle_offset=0.0): #cast a ray in the direction of the age
     return 150
 
 def get_state(): #returns current state in the form of a numpy array(normalized)
-    left_distance=get_perpendicular(angle_offset=-90)
-    right_distance=get_perpendicular(angle_offset=90)
-    left_distance=max(0,min(left_distance/100,1.0))
-    right_distance=max(0,min(right_distance/100,1.0))
+    left_far = get_perpendicular(angle_offset=-90)
+    left_mid = get_perpendicular(angle_offset=-45)
+    front = get_perpendicular(angle_offset=0)
+    right_mid = get_perpendicular(angle_offset=45)
+    right_far = get_perpendicular(angle_offset=90)
+    left_far=max(0,min(left_far/100,1.0))
+    left_mid=max(0,min(left_mid/100,1.0))
+    front=max(0,min(front/100,1.0))
+    right_far=max(0,min(right_far/100,1.0))
+    right_mid=max(0,min(right_mid/100,1.0))
+    center_error = abs(left_far - right_far)
     speed=agent_speed/max_speed
-    distance_to_finish=abs(agent_x-finish_line_x)
-    distance_to_finish=max(0,min(distance_to_finish/200,1.0))
     angle=agent_angle/360.0
-    return np.array([left_distance, right_distance, speed, distance_to_finish,angle],dtype=np.float32)
+    return np.array([left_far,left_mid,front,right_mid,right_far,speed,angle],dtype=np.float32)
 
 def render(display=True): # draw track
     screen.fill(white)
