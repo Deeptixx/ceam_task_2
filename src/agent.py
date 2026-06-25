@@ -9,7 +9,7 @@ from src import environment as env
 
 class RacingEnv(gym.Env):
     def __init__(self):
-        self.observation_space=spaces.Box(low=0,high=1,shape=(5,),dtype=np.float32)
+        self.observation_space=spaces.Box(low=0,high=1,shape=(7,),dtype=np.float32)
         self.action_space=spaces.Discrete(4)
     def reset(self,seed=None):
         state=env.reset()
