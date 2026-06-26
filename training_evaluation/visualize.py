@@ -198,7 +198,7 @@ def plot_multiple_episodes(model, num_episodes=10):
 
 def load_and_visualize(model_path="models/trained_racing_agent", episodes=10):
     from stable_baselines3 import PPO
-    print(f"Loading model from {model_path}...")
+    print(f"Loading model from {model_path}:")
     model = PPO.load(model_path)
     print("Model loaded.")
     print(f"\nRunning {episodes} episodes and collecting data...")
