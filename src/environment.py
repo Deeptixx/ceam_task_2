@@ -82,7 +82,7 @@ def step(action):
         if prev_agent_x < finish_line_x and agent_x >= finish_line_x:
             crossed_start = True
 
-    start_dx = agent_x - starting_x
+    start_dx = agent_x - starting_x #calculate euclidean distance from the starting point to determine whether the agent has returned close enough to the starting point so that it can be counted as a complete lap
     start_dy = agent_y - starting_y
     dist_to_start = math.sqrt(start_dx**2 + start_dy**2)
 
@@ -234,5 +234,5 @@ if __name__ == "__main__": #test
             print(f"Episode done. Crashed: {crashed}, Finished: {finished}, Total steps: {steps}")
             state = reset()
     
-    print("Test complete!")
+    print("Test complete")
     pygame.quit()
