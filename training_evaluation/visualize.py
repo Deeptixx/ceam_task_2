@@ -124,14 +124,10 @@ def plot_multiple_episodes(model, num_episodes=10):
     ax2.grid(True, alpha=0.3)
     ax2.axhline(y=np.mean(steps_per_episode), color='r', linestyle='--', label='Average')
     ax2.legend()
-    #Episode outcomes (pie chart)
     ax3 = fig.add_subplot(gs[0, 2])
-    outcomes = [sum(finished_episodes), sum(crashed_episodes), num_episodes - sum(finished_episodes) - sum(crashed_episodes)]
-    labels = [f'Finished\n({finish_rate:.1f}%)', f'Crashed\n({crash_rate:.1f}%)', f'Timeout\n({timeout_rate:.1f}%)']
-    colors = ['green', 'red', 'yellow']
-    ax3.pie(outcomes, labels=labels, colors=colors, autopct='%1.0f', startangle=90)
-    ax3.set_title('Episode Outcomes')
-    #Success metrics (bar chart)
+    ax3.axis("off")
+    ax3.set_title("Episode Outcomes (see metrics below)")
+    #Success metrics
     ax4 = fig.add_subplot(gs[1, 0])
     metrics = [success_rate, crash_rate, timeout_rate]
     metric_labels = ['Success\n(Finished)', 'Crash', 'Timeout']
@@ -201,7 +197,7 @@ def load_and_visualize(model_path="models/trained_racing_agent", episodes=10):
     print(f"Loading model from {model_path}:")
     model = PPO.load(model_path)
     print("Model loaded.")
-    print(f"\nRunning {episodes} episodes and collecting data...")
+    print(f"\nRunning {episodes} episodes and collecting data:")
     stats = plot_multiple_episodes(model, num_episodes=episodes)
     print("\nRunning single detailed episode:")
     episode_data, total_reward, step_count, crashed, finished = run_episode_and_collect_data(model)
