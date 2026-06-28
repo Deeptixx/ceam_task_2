@@ -51,7 +51,8 @@ The observation vector contains seven values
 - right_mid (distance to right front wall)
 - speed
 - heading angle (current orientation)
-Distnace sensors allow the agent to estimate nearby onstacles, speed tells the agent about current motion, and angle, the agents orientation.
+
+Distance sensors allow the agent to estimate nearby obstacles, speed tells the agent about current motion, and angle, the agents orientation.
 ### Action space
 4 possible actions (turn right, turn left, brake, accelerate)
 ## Reward Design
