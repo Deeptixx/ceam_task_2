@@ -78,7 +78,7 @@ encourages agent to keep moving rather than remaining stationary
 
 ## Design decisions
 - **Why PPO and not DQN?**
-  - I chose PPO for this task because it provides more stable policy updates which is better for sequential decision making tasks like like racing agents. DQN learns Q-values and requires an experience replay buffer and target network while PPO directly learns policy making training simpler.
+  - I chose PPO for this task because it provides more stable policy updates which is better for sequential decision making tasks like racing agents. DQN learns Q-values and requires an experience replay buffer and target network while PPO directly learns policy making training simpler.
 - **Why MLP instead of CNN?**
    - The agent recieves numerical sensor reading rather than image inputs, MLP is simpler and more appropriate than a convolutional neural networks 
 - **Why custom environment?**
