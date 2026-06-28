@@ -7,26 +7,22 @@ This eas implemented using Stable-Baselines3 with the proximal policy optimizati
 
 ## Project Structure
 
+```text
 ceam_task_2/
-│
 ├── models/
 │   └── trained_racing_agent.zip
-│
 ├── results/
 │   └── analysis/
-│
 ├── src/
 │   ├── environment.py
 │   ├── reward_function.py
 │   └── agent.py
-│
 ├── training_evaluation/
 │   ├── train.py
 │   ├── test.py
 │   └── visualize.py
-│
 └── README.md
-
+```
 ## Environment Design
 The environment consists of:
 - An outer boundary representing the edge of the track
@@ -76,7 +72,7 @@ encourages agent to keep moving rather than remaining stationary
 
 ## Improvements made
 - **Finish line detection**
-  - Initially my finish line logic was a little flawed because I applied a logic that assumed the track was a straight path and my agent never got around to learning but after refining it and taking into account the elliptical track the agent could successfully complete laps
+  - Initially my finish line logic was a little flawed because I applied a logic that assumed the track was a straight path and my agent never got around to learning the track but after refining it and taking into account the elliptical track the agent could successfully complete laps
 - Evaluation plots
  - Used to measure success rate, crash rate, timeout rate, average reward and average number of steps (to analyse the final policy)
 
