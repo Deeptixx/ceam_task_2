@@ -2,8 +2,8 @@
 
 ## Project Overview
 This project implements an autonomous racing agent capable of learning how to navigate a custom 2D racing track using reinforcement learning.
-The given task was to design and train an agent that begines with no prior knowledge of the environment and gradually learns to successfully complete a lap through interaction with the environment and rewards. Unlike supervised learning here the agent learns through trial and error. The agent repeatedly observes the environment, performs actions, recieves rewardsand keeps updating its policy.
-This eas implemented using Stable-Baselines3 with the proximal policy optimization algorithm and a multi layer perception(MLP) policy.
+The given task was to design and train an agent that begins with no prior knowledge of the environment and gradually learns to successfully complete a lap through interaction with the environment and rewards. Unlike supervised learning here the agent learns through trial and error. The agent repeatedly observes the environment, performs actions, recieves rewardsand keeps updating its policy.
+This task was implemented using Stable-Baselines3 with the proximal policy optimization algorithm and a multi layer perception(MLP) policy.
 
 ## Project Structure
 
@@ -65,15 +65,15 @@ encourages agent to keep moving rather than remaining stationary
 
 ## Falied Behaviour
 - **Agent remained stationary**
-  - Initially the reward function did not really encourage movement, the agent learnt that if it moves it will crash which causes penalty which is too risky so it stayed at the same place to maximize rewards , so I introduced a small movement reward so that the agent keeps moving and exploring the environment 
+  - Initially the reward function did not really encourage movement, the agent learnt that if it moves it will crash which causes penalty which is too risky so it stayed at the same place to maximize rewards to correct this, I introduced a small movement reward so that the agent keeps moving and exploring the environment 
 - **Agent timed out**
-  - Frequenty exceed the episode length so I tweaked the reward function a little bit with speed* 0.2 forward progress , I also tried increasing the movement reward initially it was movement_2 which was too high and the agent kept crashing or once again episode kept timing out, this speed*0.2 seemed to work
+  - Frequently exceeded the episode length so I tweaked the reward function a little bit with speed* 0.2 - forward progress , I also tried increasing the movement reward initially it was movement* 2 which was too high and the agent kept crashing or once again episode kept timing out, this speed*0.2 seemed to work
 - **Agent creahed near the finish line at the inner wall**
-  - After learning most of the track the agent kept crashing near the finish line at the inner wall so i introduced a center penalty
+  - After learning most of the track the agent kept crashing near the finish line at the inner wall so I introduced a center penalty
 
 ## Improvements made
 - **Finish line detection**
-  - Initially my finish line logic was a little flawed because I applied a logic that assumed the track was a straight path and my agent never got around to learning the track but after refining it and taking into account the elliptical track the agent could successfully complete laps
+  - Initially my finish line logic was a little flawed because I applied a logic that assumed the track was a straight path and my agent never got around to learning but after improving it and taking into account the elliptical track the agent could successfully complete laps
 - Evaluation plots
   - Used to measure success rate, crash rate, timeout rate, average reward and average number of steps (to analyse the final policy)
 
@@ -81,7 +81,7 @@ encourages agent to keep moving rather than remaining stationary
 - **Why PPO and not DQN?**
   - I chose PPO for this task because it provides more stable policy updates which is better for sequential decision making tasks like racing agents. DQN learns Q-values and requires an experience replay buffer and target network while PPO directly learns policy making training simpler.
 - **Why MLP instead of CNN?**
-   - The agent recieves numerical sensor readings rather than image inputs, MLP is simpler and more appropriate than a convolutional neural networks 
+   - The agent recieves numerical sensor readings rather than image inputs, MLP is simpler and more appropriate than convolutional neural networks 
 - **Why custom environment?**
   - This was just to provide deeper understanding of reinforcement learning enevironments
 
