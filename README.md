@@ -1,4 +1,4 @@
-# Autonomous Racing agent using reinforcement learning
+# Autonomous Racing Agent using Reinforcement Learning
 
 ## Project Overview
 This project implements an autonomous racing agent capable of learning how to navigate a custom 2D racing track using reinforcement learning.
@@ -36,7 +36,7 @@ Each episode terminate when:
 - The agent finishes a lap
 - Max episode length reached
 
-## Learning Process and results
+## Learning Process and Results
 The agent initially had no knowlegde of the track and selected actions randomly because of which it often stayed at the same place or crashed immediately or timed out before completing the lap
 As training progressed the reward function was refined, the agent learnt to move more consistently, although it struggled initially to reach the finish line further imporvements to the reward function led to stable behaviours
 The final racing agent succesfully navigated the track. The ep_rew_mean went from -24 to +630 consequently the ep_len_mean also increased (with occasional dips)
@@ -76,7 +76,7 @@ encourages agent to keep moving rather than remaining stationary
 - Evaluation plots
   - Used to measure success rate, crash rate, timeout rate, average reward and average number of steps (to analyse the final policy)
 
-## Design decisions
+## Design Decisions
 - **Why PPO and not DQN?**
   - I chose PPO for this task because it provides more stable policy updates which is better for sequential decision making tasks like racing agents. DQN learns Q-values and requires an experience replay buffer and target network while PPO directly learns policy making training simpler.
 - **Why MLP instead of CNN?**
