@@ -44,11 +44,11 @@ The final racing agent succesfully navigated the track. The ep_rew_mean went fro
 ### State information ( observation space)
 The agent recieves numerical observations describing its surroundings
 The observation vector contains seven values
-- left_far (dist to left wall)
-- left_mid ( dist to left front wall)
-- front (dist ahead)
-- right_far (dist to right wall)
-- right_mid (dist to right front wall)
+- left_far (distance to left wall)
+- left_mid ( distance to left front wall)
+- front (distance ahead)
+- right_far (distance to right wall)
+- right_mid (distance to right front wall)
 - speed
 - heading angle (current orientation)
 Distnace sensors allow the agent to estimate nearby onstacles, speed tells the agent about current motion, and angle, the agents orientation.
@@ -74,13 +74,13 @@ encourages agent to keep moving rather than remaining stationary
 - **Finish line detection**
   - Initially my finish line logic was a little flawed because I applied a logic that assumed the track was a straight path and my agent never got around to learning the track but after refining it and taking into account the elliptical track the agent could successfully complete laps
 - Evaluation plots
- - Used to measure success rate, crash rate, timeout rate, average reward and average number of steps (to analyse the final policy)
+  - Used to measure success rate, crash rate, timeout rate, average reward and average number of steps (to analyse the final policy)
 
 ## Design decisions
 - **Why PPO and not DQN?**
   - I chose PPO for this task because it provides more stable policy updates which is better for sequential decision making tasks like racing agents. DQN learns Q-values and requires an experience replay buffer and target network while PPO directly learns policy making training simpler.
 - **Why MLP instead of CNN?**
-   - The agent recieves numerical sensor reading rather than image inputs, MLP is simpler and more appropriate than a convolutional neural networks 
+   - The agent recieves numerical sensor readings rather than image inputs, MLP is simpler and more appropriate than a convolutional neural networks 
 - **Why custom environment?**
   - This was just to provide deeper understanding of reinforcement learning enevironments
 
