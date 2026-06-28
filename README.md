@@ -86,4 +86,4 @@ encourages agent to keep moving rather than remaining stationary
 
 ## Conclusion 
 Through this project, I gained a much better understanding of how reinforcement learning works in practice. Starting with an agent that had no knowledge of the track, I improved its behaviour by refining the reward function, observations, environment through several iterations until it was able to complete the track successfully.
-Overall, this project helped me understand the importance of reward design, observation selection, and continuous experimentation in reinforcement learning. It also gave me hands-on experience in building, training, debugging, and evaluating an autonomous racing agent.
+Overall, this project helped me understand the importance of reward design, observation selection,continuous experimentation in reinforcement learning. It also gave me hands-on experience in building, training, debugging, and evaluating an autonomous racing agent.
