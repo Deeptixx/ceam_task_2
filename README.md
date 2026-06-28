@@ -6,26 +6,27 @@ The given task was to design and train an agent that begines with no prior knowl
 This eas implemented using Stable-Baselines3 with the proximal policy optimization algorithm and a multi layer perception(MLP) policy.
 
 ## Project Structure
-Project Structure
-ceam_task_2/
 
+ceam_task_2/
+│
 ├── models/
 │   └── trained_racing_agent.zip
 │
 ├── results/
-│   ├── analysis/
+│   └── analysis/
 │
 ├── src/
 │   ├── environment.py
 │   ├── reward_function.py
-│   ├── agent.py 
+│   └── agent.py
 │
 ├── training_evaluation/
 │   ├── train.py
 │   ├── test.py
-│   ├── visualize.py
+│   └── visualize.py
 │
 └── README.md
+
 ## Environment Design
 The environment consists of:
 - An outer boundary representing the edge of the track
