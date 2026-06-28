@@ -5,5 +5,5 @@ def get_reward(crashed, finished, speed):
         return 500
     
     reward = 0.1
-    reward += speed * 0.2  # Increased from 1.5
+    reward += speed * 0.2 
     return reward
